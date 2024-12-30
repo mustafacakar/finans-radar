@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>BIST Treemap</title>
+    
+    <link href="https://cdn.rawgit.com/rastikerdar/vazir-font/v19.2.0/dist/font-face.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/panzoom@7.0.2/dist/panzoom.min.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <header class="header">
+            <div class="index-info">
+                <h1>BIST 100</h1>
+                <div class="xu100-data">
+                    <div class="price">
+                        <span class="current">Loading...</span>
+                        <span class="change">...</span>
+                    </div>
+                    <div class="volume">Hacim: <span>Loading...</span></div>
+                </div>
+            </div>
+            <div class="filters">
+                <div class="date-range">
+                    <select id="timeRange">
+                        <option value="1d">Bugün</option>
+                        <option value="5d">5 Gün</option>
+                        <option value="1mo">1 Ay</option>
+                        <option value="3mo">3 Ay</option>
+                        <option value="6mo">6 Ay</option>
+                        <option value="1y">1 Yıl</option>
+                        <option value="custom">Özel Tarih</option>
+                    </select>
+                    <div id="customDateRange" style="display: none;">
+                        <input type="date" id="startDate">
+                        <input type="date" id="endDate">
+                        <button id="applyCustomDate">Uygula</button>
+                    </div>
+                </div>
+                <div class="sector-filter">
+                    <select id="sectorFilter">
+                        <option value="all">Tüm Sektörler</option>
+                        <option value="Bankacılık">Bankacılık</option>
+                        <option value="Sanayi">Sanayi</option>
+                        <option value="Ulaştırma">Ulaştırma</option>
+                        <option value="Holding">Holding</option>
+                        <option value="Teknoloji">Teknoloji</option>
+                        <option value="Enerji">Enerji</option>
+                        <option value="Gayrimenkul">Gayrimenkul</option>
+                        <option value="Perakende">Perakende</option>
+                        <option value="Madencilik">Madencilik</option>
+                        <option value="Gıda">Gıda</option>
+                    </select>
+                </div>
+            </div>
+            <div class="controls">
+                <button id="resetZoom" title="Görünümü Sıfırla">
+                    <i class="fas fa-compress-arrows-alt"></i>
+                </button>
+                <button id="toggleFullscreen" title="Tam Ekran">
+                    <i class="fas fa-expand"></i>
+                </button>
+                <div class="last-update">
+                    Son Güncelleme: <span>...</span>
+                </div>
+            </div>
+        </header>
+        <div id="chart"></div>
+        <div class="legend">
+            <div class="legend-item">
+                <span class="color-box down-severe"></span> ≤ -7%
+            </div>
+            <div class="legend-item">
+                <span class="color-box down-medium"></span> -6% ile -3%
+            </div>
+            <div class="legend-item">
+                <span class="color-box down-light"></span> -2% ile -1%
+            </div>
+            <div class="legend-item">
+                <span class="color-box up-light"></span> 0% ile 2%
+            </div>
+            <div class="legend-item">
+                <span class="color-box up-medium"></span> 3% ile 7%
+            </div>
+            <div class="legend-item">
+                <span class="color-box up-severe"></span> > 7%
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,296 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Vazir', sans-serif;
+}
+
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: #212121;
+    overflow: hidden;
+}
+
+.header {
+    background: #1a1a1a;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    flex-shrink: 0;
+}
+
+.index-info h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.xu100-data {
+    display: flex;
+    gap: 2rem;
+}
+
+.price {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.price .change {
+    margin-left: 1rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.price .change.positive {
+    background: #215E2C;
+}
+
+.price .change.negative {
+    background: #AA2121;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.controls button {
+    background: #333;
+    border: none;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.controls button:hover {
+    background: #444;
+}
+
+.last-update {
+    font-size: 0.9rem;
+    color: #888;
+}
+
+#chart {
+    flex: 1;
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.legend {
+    background: #1a1a1a;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.color-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+}
+
+.down-severe { background: #AA2121; }
+.down-medium { background: #C84040; }
+.down-light { background: #ED7171; }
+.up-light { background: #7EC17E; }
+.up-medium { background: #518651; }
+.up-severe { background: #215E2C; }
+
+.tooltip {
+    position: absolute;
+    padding: 1rem;
+    background: rgba(0, 0, 0, .95);
+    color: #fff;
+    border: 1px solid #333;
+    border-radius: 4px;
+    pointer-events: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.tooltip ul {
+    list-style: none;
+}
+
+.tooltip li {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+.loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 1.2em;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 2rem;
+    border-radius: 8px;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Text stilleri */
+.treemap-text {
+    font-family: 'Vazir', sans-serif;
+    pointer-events: none;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.treemap-text .symbol {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.treemap-text .price {
+    font-size: 0.9em;
+}
+
+.treemap-text .change {
+    font-size: 0.9em;
+}
+
+/* Sektör başlıkları */
+.sector-title {
+    font-size: 16px;
+    font-weight: 500;
+    fill: #fff;
+    pointer-events: none;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Hover efekti için tooltip */
+g:hover {
+    cursor: pointer;
+}
+
+g:hover rect {
+    stroke: #fff;
+    stroke-width: 2px;
+    stroke-opacity: 0.8;
+}
+
+/* Fullscreen modu için stil */
+.dashboard.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+}
+
+.filters {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0 2rem;
+}
+
+.date-range {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.date-range select, 
+.date-range input,
+.date-range button {
+    background: #333;
+    color: white;
+    border: 1px solid #444;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.date-range select:hover,
+.date-range button:hover {
+    background: #444;
+    cursor: pointer;
+}
+
+#customDateRange {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+#customDateRange input[type="date"] {
+    background: #333;
+    color: white;
+    border: 1px solid #444;
+    padding: 0.4rem;
+    border-radius: 4px;
+}
+
+#customDateRange input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+#applyCustomDate {
+    background: #215E2C;
+    border: none;
+    padding: 0.5rem 1rem;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#applyCustomDate:hover {
+    background: #1a4922;
+}
+
+.sector-filter {
+    display: flex;
+    align-items: center;
+}
+
+.sector-filter select {
+    background: #333;
+    color: white;
+    border: 1px solid #444;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.sector-filter select:hover {
+    background: #444;
+    cursor: pointer;
+}
+
+/* SVG için responsive boyutlandırma */
+svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Treemap container için stil */
+.treemap-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
