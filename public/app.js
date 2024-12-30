@@ -492,10 +492,43 @@ document.getElementById('applyCustomDate').addEventListener('click', function() 
 // API URL'i boş bırakıyoruz çünkü aynı domain'den servis edilecek
 const API_URL = '';
 
+// BIST30 hisseleri
+const BIST30 = [
+    'AKBNK', 'ARCLK', 'ASELS', 'BIMAS', 'EKGYO', 
+    'EREGL', 'FROTO', 'GARAN', 'HEKTS', 'ISCTR', 
+    'KCHOL', 'KOZAA', 'KOZAL', 'KRDMD', 'PETKM', 
+    'PGSUS', 'SAHOL', 'SASA', 'SISE', 'TAVHL', 
+    'TCELL', 'THYAO', 'TOASO', 'TSKB', 'TUPRS', 
+    'VAKBN', 'YKBNK', 'YATAS', 'OYAKC', 'VESTL'
+];
+
+// Varsayılan görünüm modunu tutan değişken
+let viewMode = 'BIST30'; // 'BIST30' veya 'ALL'
+
+// Görünüm değiştirme butonu ekleyelim HTML'e
+// <button id="toggleView" class="view-btn">
+//     <i class="fas fa-exchange-alt"></i> Tüm Hisseler
+// </button>
+
+// Görünüm değiştirme fonksiyonu
+document.getElementById('toggleView').addEventListener('click', async function() {
+    const button = this;
+    viewMode = viewMode === 'BIST30' ? 'ALL' : 'BIST30';
+    button.innerHTML = `<i class="fas fa-exchange-alt"></i> ${viewMode === 'BIST30' ? 'Tüm Hisseler' : 'BIST30'}`;
+    
+    loadingDiv.style("display", "block");
+    await updateVisualization();
+});
+
 async function fetchStockData() {
-    // Seçilen sektöre göre hisseleri filtrele
+    // Seçilen sektöre göre ve görünüm moduna göre hisseleri filtrele
     const symbols = Object.entries(stockSectors)
-        .filter(([_, sector]) => currentSector === 'all' || sector === currentSector)
+        .filter(([code, sector]) => {
+            if (viewMode === 'BIST30') {
+                return BIST30.includes(code) && (currentSector === 'all' || sector === currentSector);
+            }
+            return currentSector === 'all' || sector === currentSector;
+        })
         .map(([code]) => `${code}.IS`);
     
     const stockData = [];

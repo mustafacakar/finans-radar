@@ -364,3 +364,24 @@ svg {
 .change.negative {
     background: #AA2121;
 }
+
+.view-btn {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background 0.3s;
+}
+
+.view-btn:hover {
+    background: #34495e;
+}
+
+.view-btn i {
+    font-size: 14px;
+}
