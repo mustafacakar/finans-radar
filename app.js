@@ -249,10 +249,10 @@ const sectorOrder = {
 // Hisse senetleri ve sektörleri
 const stockSectors = {
     'AKBNK': 'Bankacılık',
-    'GARAN': 'Bankacılık',
-    'ISCTR': 'Bankacılık',
-    'YKBNK': 'Bankacılık',
-    'VAKBN': 'Bankacılık',
+    'GARAN': 'Bankacılık'
+ /*   'ISCTR': 'Bankacılık',
+    'YKBNK': 'Bankacılık'
+     'VAKBN': 'Bankacılık',
     'HALKB': 'Bankacılık',
     'SKBNK': 'Bankacılık',
     'ALBRK': 'Bankacılık',
@@ -445,7 +445,7 @@ const stockSectors = {
     // Cam
     'TRKCM': 'Cam',
     'SISE': 'Cam',
-    'CGCAM': 'Cam'
+    'CGCAM': 'Cam' */
 };
 
 // Tarih filtresi için global değişkenler
@@ -496,7 +496,7 @@ async function fetchStockData() {
         .map(([code]) => `${code}.IS`);
     
     const stockData = [];
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://bist-api.onrender.com';
+    const API_URL = 'https://finans-radar.onrender.com';
     
     console.log(`Fetching data with range: ${currentRange} and sector: ${currentSector}`);
     
@@ -530,21 +530,29 @@ async function fetchStockData() {
                 const meta = result.meta;
                 const stockCode = symbol.replace('.IS', '');
                 
-                // Debug log
-                console.log(`Processing ${stockCode} for range ${currentRange}:`, {
-                    price: meta.regularMarketPrice,
-                    prevClose: meta.previousClose,
-                    change: ((meta.regularMarketPrice - meta.previousClose) / meta.previousClose) * 100
+                const currentPrice = meta.regularMarketPrice;
+                const previousClose = meta.chartPreviousClose;
+                const changePercent = ((currentPrice - previousClose) / previousClose) * 100;
+                
+                // Detaylı debug log
+                console.log(`${stockCode} Details:`, {
+                    currentPrice,
+                    previousClose,
+                    changePercent,
+                    rawData: meta
                 });
                 
                 stockData.push({
                     code: stockCode,
                     sector: stockSectors[stockCode],
-                    text: meta.symbol,
-                    lastprice: meta.regularMarketPrice,
-                    rate: meta.periodChange || ((meta.regularMarketPrice - meta.previousClose) / meta.previousClose * 100),
+                    text: meta.shortName || meta.symbol,
+                    lastprice: currentPrice,
+                    rate: changePercent,
                     hacim: meta.regularMarketVolume
                 });
+
+                // Eklenen veriyi kontrol et
+                console.log(`Added ${stockCode} to stockData:`, stockData[stockData.length - 1]);
             }
         } catch (error) {
             console.error(`Error fetching data for ${symbol}:`, error);
@@ -565,67 +573,99 @@ async function fetchStockData() {
     
     return {
         name: "BIST",
-        children: Object.entries(sectorGroups).map(([sector, stocks]) => ({
-            name: sector,
-            children: stocks.map(stock => ({
-                name: stock.code,
-                volume: stock.hacim || 0,
-                value: stock.lastprice || 0,
-                price: stock.lastprice || 0,
-                pc: parseFloat(stock.rate.toFixed(2)) || 0,
-                fullName: stock.text || stock.code
-            }))
-        }))
+        children: Object.entries(sectorGroups).map(([sector, stocks]) => {
+            console.log(`Processing sector ${sector}:`, stocks);
+            return {
+                name: sector,
+                children: stocks.map(stock => {
+                    const treeMapItem = {
+                        name: stock.code,
+                        volume: stock.hacim || 0,
+                        value: stock.lastprice || 0,
+                        price: stock.lastprice || 0,
+                        pc: parseFloat(stock.rate.toFixed(2)) || 0,
+                        fullName: stock.text || stock.code
+                    };
+                    console.log(`TreeMap item for ${stock.code}:`, treeMapItem);
+                    return treeMapItem;
+                })
+            };
+        })
     };
 }
 
 // XU100 verisi için fonksiyonu güncelle
 async function fetchXU100Data() {
     try {
-        let url = `https://your-backend-url.com/api/xu100?range=${currentRange}`;
+        let url = `${API_URL}/api/xu100?symbol=^XU100&range=${currentRange}`;
         if (currentRange === 'custom' && customStartDate && customEndDate) {
             url += `&period1=${Math.floor(customStartDate.getTime() / 1000)}`;
             url += `&period2=${Math.floor(customEndDate.getTime() / 1000)}`;
         }
         
+        console.log('Fetching XU100 data from:', url);
         const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
         
         if (data.chart.result && data.chart.result[0]) {
             const result = data.chart.result[0];
             const meta = result.meta;
             const price = meta.regularMarketPrice;
-            const prevClose = meta.previousClose;
+            const prevClose = meta.chartPreviousClose;
             const change = ((price - prevClose) / prevClose) * 100;
-            const volume = meta.regularMarketVolume * price;
+            const volume = meta.regularMarketVolume;
+            
+            // Debug log
+            console.log('XU100 data:', {
+                price,
+                prevClose,
+                change,
+                volume
+            });
             
             // UI güncelleme
-            document.querySelector('.xu100-data .current').textContent = 
-                `₺${format(price)}`;
+            const currentElement = document.querySelector('.xu100-data .current');
+            if (currentElement) {
+                currentElement.textContent = `₺${format(price)}`;
+            }
             
             const changeElement = document.querySelector('.xu100-data .change');
-            changeElement.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
-            changeElement.className = `change ${change >= 0 ? 'positive' : 'negative'}`;
+            if (changeElement) {
+                changeElement.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
+                changeElement.className = `change ${change >= 0 ? 'positive' : 'negative'}`;
+            }
             
-            document.querySelector('.xu100-data .volume span').textContent = 
-                `₺${format(volume)}`;
+            const volumeElement = document.querySelector('.xu100-data .volume span');
+            if (volumeElement) {
+                volumeElement.textContent = `₺${format(volume)}`;
+            }
             
             // Son güncelleme zamanı
             const now = new Date();
-            const lastUpdate = new Date(meta.timestamp * 1000);
-            document.querySelector('.last-update span').textContent = 
-                `${lastUpdate.toLocaleDateString('tr-TR')} ${now.toLocaleTimeString('tr-TR')}`;
-            
-            console.log('XU100 update:', {
-                price,
-                prevClose,
-                change: change.toFixed(2) + '%',
-                volume: format(volume),
-                lastUpdate: lastUpdate.toLocaleString('tr-TR')
-            });
+            const lastUpdate = new Date(meta.regularMarketTime * 1000);
+            const lastUpdateElement = document.querySelector('.last-update span');
+            if (lastUpdateElement) {
+                lastUpdateElement.textContent = 
+                    `${lastUpdate.toLocaleDateString('tr-TR')} ${now.toLocaleTimeString('tr-TR')}`;
+            }
         }
     } catch (error) {
         console.error('XU100 veri hatası:', error);
+        // Hata durumunda UI'ı güncelle
+        const elements = {
+            current: document.querySelector('.xu100-data .current'),
+            change: document.querySelector('.xu100-data .change'),
+            volume: document.querySelector('.xu100-data .volume span')
+        };
+
+        if (elements.current) elements.current.textContent = 'Hata';
+        if (elements.change) elements.change.textContent = '-';
+        if (elements.volume) elements.volume.textContent = 'Veri alınamadı';
     }
 }
 
@@ -651,11 +691,34 @@ function toggleFullscreen() {
 document.getElementById('resetZoom').addEventListener('click', resetZoom);
 document.getElementById('toggleFullscreen').addEventListener('click', toggleFullscreen);
 
-// XU100 verisini de güncelle
+// Yenile butonu için event listener ekleyelim
+document.getElementById('refreshButton').addEventListener('click', async function() {
+    const button = this;
+    button.classList.add('loading');
+    button.disabled = true;
+    
+    try {
+        await updateAll();
+        console.log('Data refreshed successfully');
+    } catch (error) {
+        console.error('Refresh error:', error);
+    } finally {
+        button.classList.remove('loading');
+        button.disabled = false;
+    }
+});
+
+// updateAll fonksiyonunu güncelleyelim
 async function updateAll() {
     loadingDiv.style("display", "block");
     
     try {
+        const button = document.getElementById('refreshButton');
+        if (button) {
+            button.classList.add('loading');
+            button.disabled = true;
+        }
+        
         await Promise.all([
             updateVisualization(),
             fetchXU100Data()
@@ -666,9 +729,16 @@ async function updateAll() {
     } catch (error) {
         console.error('Update error:', error);
         loadingDiv.text("Veri güncellenirken hata oluştu");
+    } finally {
+        const button = document.getElementById('refreshButton');
+        if (button) {
+            button.classList.remove('loading');
+            button.disabled = false;
+        }
     }
 }
 
-// İlk yükleme ve periyodik güncelleme
-updateAll();
-setInterval(updateAll, 5 * 60 * 1000);
+// Sayfa yüklendiğinde sadece bir kez çalıştır
+document.addEventListener('DOMContentLoaded', function() {
+    updateAll();
+});

@@ -16,12 +16,21 @@
 .header {
     background: #1a1a1a;
     color: white;
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
+    padding: 1rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
     align-items: center;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     flex-shrink: 0;
+    position: relative;
+    z-index: 100;
+    gap: 1rem;
+}
+
+.index-info {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
 }
 
 .index-info h1 {
@@ -31,30 +40,30 @@
 
 .xu100-data {
     display: flex;
-    gap: 2rem;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
-.price {
+.xu100-data .price {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     font-size: 1.2rem;
+}
+
+.xu100-data .current {
     font-weight: bold;
 }
 
-.price .change {
-    margin-left: 1rem;
-    padding: 0.2rem 0.5rem;
+.xu100-data .change {
+    padding: 0.2rem 0.8rem;
     border-radius: 4px;
-}
-
-.price .change.positive {
-    background: #215E2C;
-}
-
-.price .change.negative {
-    background: #AA2121;
+    font-size: 1rem;
 }
 
 .controls {
     display: flex;
+    justify-content: flex-end;
     align-items: center;
     gap: 1rem;
 }
@@ -76,6 +85,7 @@
 .last-update {
     font-size: 0.9rem;
     color: #888;
+    margin-left: 1rem;
 }
 
 #chart {
@@ -201,9 +211,9 @@ g:hover rect {
 
 .filters {
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 1rem;
-    margin: 0 2rem;
+    gap: 1.5rem;
 }
 
 .date-range {
@@ -293,4 +303,64 @@ svg {
     width: 100%;
     height: 100%;
     position: relative;
+}
+
+/* Yenile butonu stilleri */
+.refresh-btn {
+    background: #2c3e50 !important;
+    padding: 0.5rem 1rem !important;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.refresh-btn i {
+    font-size: 14px;
+}
+
+.refresh-btn.loading i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Filtre stilleri */
+.date-range, .sector-filter {
+    min-width: 120px;
+}
+
+.date-range select, 
+.sector-filter select {
+    width: 100%;
+}
+
+/* Responsive tasarım için medya sorguları */
+@media (max-width: 1200px) {
+    .header {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .index-info, .filters, .controls {
+        justify-content: center;
+    }
+
+    .filters {
+        flex-wrap: wrap;
+    }
+}
+
+/* Pozitif/Negatif değişim renkleri */
+.change.positive {
+    background: #215E2C;
+}
+
+.change.negative {
+    background: #AA2121;
 }
