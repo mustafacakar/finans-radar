@@ -213,11 +213,17 @@ window.addEventListener("resize", () => {
 // Draw for the first time to initialize.
 redraw();
 
-// ZOOM Function
+// ZOOM Function - sadece zoom'a izin ver, sürüklemeyi engelle
 var instance = panzoom(document.getElementById("chart"), {
     zoomSpeed: 0.06,
     maxZoom: 20,
-    minZoom: 1
+    minZoom: 1,
+    // Sürüklemeyi devre dışı bırak
+    panEnabled: false,
+    // Sadece mouse wheel ile zoom'a izin ver
+    pinchEnabled: false,
+    // Dokunmatik cihazlarda sürüklemeyi engelle
+    touchAction: 'none'
 });
 
 instance.on("panstart", function (e) {
