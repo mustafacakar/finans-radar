@@ -67,6 +67,16 @@ let currentSector = 'all';
 document.getElementById('sectorFilter').addEventListener('change', async function(e) {
     currentSector = e.target.value;
     
+    // Eğer "Tüm Sektörler" dışında bir sektör seçildiyse viewMode'u ALL yap
+    if (currentSector !== 'all') {
+        viewMode = 'ALL';
+        // Toggle butonunun textini güncelle
+        const toggleButton = document.getElementById('toggleView');
+        if (toggleButton) {
+            toggleButton.innerHTML = `<i class="fas fa-exchange-alt"></i> BIST30`;
+        }
+    }
+    
     // Loading göster
     loadingDiv.style("display", "block");
     
@@ -516,6 +526,15 @@ document.getElementById('toggleView').addEventListener('click', async function()
     viewMode = viewMode === 'BIST30' ? 'ALL' : 'BIST30';
     button.innerHTML = `<i class="fas fa-exchange-alt"></i> ${viewMode === 'BIST30' ? 'Tüm Hisseler' : 'BIST30'}`;
     
+    // BIST30 moduna geçildiğinde sektör filtresini sıfırla
+    if (viewMode === 'BIST30') {
+        currentSector = 'all';
+        const sectorFilter = document.getElementById('sectorFilter');
+        if (sectorFilter) {
+            sectorFilter.value = 'all';
+        }
+    }
+    
     loadingDiv.style("display", "block");
     await updateVisualization();
 });
@@ -524,16 +543,21 @@ async function fetchStockData() {
     // Seçilen sektöre göre ve görünüm moduna göre hisseleri filtrele
     const symbols = Object.entries(stockSectors)
         .filter(([code, sector]) => {
-            if (viewMode === 'BIST30') {
-                return BIST30.includes(code) && (currentSector === 'all' || sector === currentSector);
+            if (currentSector !== 'all') {
+                // Sektör filtresi aktifse sadece o sektördeki hisseleri göster
+                return sector === currentSector;
+            } else if (viewMode === 'BIST30') {
+                // Tüm sektörler seçiliyse ve BIST30 modundaysa
+                return BIST30.includes(code);
             }
-            return currentSector === 'all' || sector === currentSector;
+            // Tüm sektörler ve ALL modunda tüm hisseleri göster
+            return true;
         })
         .map(([code]) => `${code}.IS`);
     
-    const stockData = [];
+    console.log(`Fetching data for ${symbols.length} symbols in ${currentSector} sector, viewMode: ${viewMode}`);
     
-    console.log(`Fetching data with range: ${currentRange} and sector: ${currentSector}`);
+    const stockData = [];
     
     // Günlük veri için tarih aralığını ayarla
     if (currentRange === '1d') {
