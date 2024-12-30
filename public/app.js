@@ -704,13 +704,12 @@ async function fetchXU100Data() {
                 volumeElement.textContent = `₺${format(volume)}`;
             }
             
-            // Son güncelleme zamanı
+            // Son güncelleme zamanını sadece şu anki zaman olarak göster
             const now = new Date();
-            const lastUpdate = new Date(meta.regularMarketTime * 1000);
             const lastUpdateElement = document.querySelector('.last-update span');
             if (lastUpdateElement) {
                 lastUpdateElement.textContent = 
-                    `${lastUpdate.toLocaleDateString('tr-TR')} ${now.toLocaleTimeString('tr-TR')}`;
+                    `${now.toLocaleDateString('tr-TR')} ${now.toLocaleTimeString('tr-TR')}`;
             }
         }
     } catch (error) {
