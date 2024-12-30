@@ -249,10 +249,10 @@ const sectorOrder = {
 // Hisse senetleri ve sektörleri
 const stockSectors = {
     'AKBNK': 'Bankacılık',
-    'GARAN': 'Bankacılık'
- /*   'ISCTR': 'Bankacılık',
-    'YKBNK': 'Bankacılık'
-     'VAKBN': 'Bankacılık',
+    'GARAN': 'Bankacılık',
+    'ISCTR': 'Bankacılık',
+    'YKBNK': 'Bankacılık',
+    'VAKBN': 'Bankacılık',
     'HALKB': 'Bankacılık',
     'SKBNK': 'Bankacılık',
     'ALBRK': 'Bankacılık',
@@ -445,7 +445,7 @@ const stockSectors = {
     // Cam
     'TRKCM': 'Cam',
     'SISE': 'Cam',
-    'CGCAM': 'Cam' */
+    'CGCAM': 'Cam' 
 };
 
 // Tarih filtresi için global değişkenler
